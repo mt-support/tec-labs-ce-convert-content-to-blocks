@@ -8,31 +8,31 @@
  *  tribe( 'assets' )->remove( 'asset-name' );
  * ```
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__
+ * @package Tribe\Extensions\ConvertContentToBlocks
  */
 
-namespace Tribe\Extensions\__TRIBE_NAMESPACE__;
+namespace Tribe\Extensions\ConvertContentToBlocks;
 
 use TEC\Common\Contracts\Service_Provider;
 
 /**
  * Register Assets.
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__
+ * @package Tribe\Extensions\ConvertContentToBlocks
  */
 class Assets extends Service_Provider {
 	/**
 	 * Binds and sets up implementations.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	public function register() {
 		$this->container->singleton( static::class, $this );
-		$this->container->singleton( 'extension.__TRIBE_SLUG_CLEAN__.assets', $this );
+		$this->container->singleton( 'extension.ce_convert_content_to_blocks.assets', $this );
 
 		$plugin = tribe( Plugin::class );
 

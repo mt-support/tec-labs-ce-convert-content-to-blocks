@@ -1,15 +1,15 @@
-=== __TRIBE_BASE__ Extension: __TRIBE_NAME__ ===
+=== The Events Calendar: Community Events Extension: Convert Submitted Content to Blocks ===
 Contributors: theeventscalendar
 Donate link: https://evnt.is/29
 Tags: events, calendar
-Requires at least: 4.9
-Tested up to: 5.7
-Requires PHP: 5.6
-Stable tag: __TRIBE_VERSION__
+Requires at least: 6.0.0
+Tested up to: 6.2.2
+Requires PHP: 8.0
+Stable tag: 2.5.0
 License: GPL version 3 or any later version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-__TRIBE_DESCRIPTION__
+Convert the event content submitted through Community Events to block editor format.
 
 == Description ==
 
@@ -37,6 +37,37 @@ We're always interested in your feedback and our [Help Desk](https://support.the
 
 == Changelog ==
 
-= [1.0.0] YYYY-MM-DD =
+= [2.5.0] TBD =
+
+* Enhancement - Moved the code to the extension template.
+
+= [2.4.0] 2023-07-06 =
+
+* Enhancement - Moved the code to its own plugin.
+* Enhancement - Added a hard coded option to define a cutoff date before which events content is not converted.
+* Fix - Made sure that the post content update only happens on Community Events submissions.
+
+= [2.3.1] 2023-06-27 =
+
+* Fix - Adjusted the return value type of the `tec_ce_remove_blocks_on_edit()`` function.
+
+= [2.3.0] 2023-06-23 =
+
+* Enhancement - Added a way to handle events that were created before the snippet and already have block editor markup.
+* Enhancement - Handle multiple organizers.
+
+= [2.2.0] 2023-06-21 =
+
+* Enhancement - Grab custom fields automatically.
+
+= [2.1.0] 2023-06-21 =
+
+* Fix - Make sure organizer shows up in the block.
+* Fix - Remove checking meta update success to proceed.
+* Enhancement - Used saved options when checking for submission source.
+* Enhancement - Add event price block.
+* Enhancement - Add blocks for custom fields. (Hard coded.)
+
+= [1.0.0] 2020-06-20 =
 
 * Initial release

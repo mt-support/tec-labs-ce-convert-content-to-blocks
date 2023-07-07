@@ -2,72 +2,72 @@
 /**
  * Plugin Class.
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__
+ * @package Tribe\Extensions\ConvertContentToBlocks
  */
 
-namespace Tribe\Extensions\__TRIBE_NAMESPACE__;
+namespace Tribe\Extensions\ConvertContentToBlocks;
 
 use TEC\Common\Contracts\Service_Provider;
 /**
  * Class Plugin
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__
+ * @package Tribe\Extensions\ConvertContentToBlocks
  */
 class Plugin extends Service_Provider {
 	/**
 	 * Stores the version for the plugin.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	const VERSION = '__TRIBE_VERSION__';
+	const VERSION = '1.0.0';
 
 	/**
 	 * Stores the base slug for the plugin.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	const SLUG = '__TRIBE_SLUG__';
+	const SLUG = 'ce-convert-content-to-blocks';
 
 	/**
 	 * Stores the base slug for the extension.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var string
 	 */
-	const FILE = TRIBE_EXTENSION___TRIBE_SLUG_CLEAN_ALLCAPS___FILE;
+	const FILE = TRIBE_EXTENSION_CE_CONVERT_CONTENT_TO_BLOCKS_FILE;
 
 	/**
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var string Plugin Directory.
 	 */
 	public $plugin_dir;
 
 	/**
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var string Plugin path.
 	 */
 	public $plugin_path;
 
 	/**
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var string Plugin URL.
 	 */
 	public $plugin_url;
 
 	/**
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @var Settings
 	 *
@@ -80,7 +80,7 @@ class Plugin extends Service_Provider {
 	 *
 	 * This always executes even if the required plugins are not present.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	public function register() {
 		// Set up the plugin provider properties.
@@ -90,8 +90,8 @@ class Plugin extends Service_Provider {
 
 		// Register this provider as the main one and use a bunch of aliases.
 		$this->container->singleton( static::class, $this );
-		$this->container->singleton( 'extension.__TRIBE_SLUG_CLEAN__', $this );
-		$this->container->singleton( 'extension.__TRIBE_SLUG_CLEAN__.plugin', $this );
+		$this->container->singleton( 'extension.ce_convert_content_to_blocks', $this );
+		$this->container->singleton( 'extension.ce_convert_content_to_blocks.plugin', $this );
 		$this->container->register( PUE::class );
 
 		if ( ! $this->check_plugin_dependencies() ) {
@@ -116,7 +116,7 @@ class Plugin extends Service_Provider {
 	/**
 	 * Checks whether the plugin dependency manifest is satisfied or not.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 *
 	 * @return bool Whether the plugin dependency manifest is satisfied or not.
 	 */
@@ -129,14 +129,14 @@ class Plugin extends Service_Provider {
 	/**
 	 * Registers the plugin and dependency manifest among those managed by Tribe Common.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	protected function register_plugin_dependencies() {
 		$plugin_register = new Plugin_Register();
 		$plugin_register->register_plugin();
 
 		$this->container->singleton( Plugin_Register::class, $plugin_register );
-		$this->container->singleton( 'extension.__TRIBE_SLUG_CLEAN__', $plugin_register );
+		$this->container->singleton( 'extension.ce_convert_content_to_blocks', $plugin_register );
 	}
 
 	/**
@@ -146,12 +146,12 @@ class Plugin extends Service_Provider {
 	 *
 	 * @return string
      *
-	 * @see \Tribe\Extensions\__TRIBE_NAMESPACE__\Settings::set_options_prefix()
+	 * @see \Tribe\Extensions\ConvertContentToBlocks\Settings::set_options_prefix()
 	 *
 	 * TODO: Remove if not using settings
 	 */
 	private function get_options_prefix() {
-		return (string) str_replace( '-', '_', 'tec-labs-__TRIBE_SLUG__' );
+		return (string) str_replace( '-', '_', 'tec-labs-ce-convert-content-to-blocks' );
 	}
 
 	/**
