@@ -10,6 +10,8 @@
 namespace Tribe\Extensions\ConvertContentToBlocks;
 
 use TEC\Common\Contracts\Service_Provider;
+use WP_Post;
+
 /**
  * Class Plugin
  *
@@ -291,7 +293,7 @@ class Plugin extends Service_Provider {
 	protected function cutoff_date() {
 		return "2023-06-10 00:00:00";
 	}
-	
+
 	/**
 	 * Checks whether the plugin dependency manifest is satisfied or not.
 	 *
