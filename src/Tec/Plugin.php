@@ -276,11 +276,34 @@ class Plugin extends Service_Provider {
 		// Comments
 		$blocks['comments']      = '<!-- wp:post-comments-form /-->';
 
-		// WooCommerce Tickets
-		// Check meta table for tickets
-		$ttt = tribe( 'tickets.handler' );
-		$ticket_ids = $ttt->get_tickets_ids( get_post( $post_id ) );
-		// Display the blocks
+		// Tickets
+		$default_ce_provider = tribe( 'community-tickets.main' )->get_option( 'default_provider_handler', 'TEC_Tickets_Commerce_Module' );
+		if ( $default_ce_provider == 'Tribe__Tickets_Plus__Commerce__WooCommerce__Main' ) {
+			$handler = 'tickets-plus.commerce.woo';
+		}
+		elseif ( $default_ce_provider == 'TEC_Tickets_Commerce_Module' ) {
+			$handler = 'tickets.handler';
+		}
+
+		if ( isset( $handler ) ) {
+			$ticket_ids = tribe( $handler )->get_tickets_ids( $post_id );
+
+			// Display the blocks
+			if ( ! empty( $ticket_ids ) ) {
+				// Opening block
+				$blocks['tickets'] = '<!-- wp:tribe/tickets -->
+<div class="wp-block-tribe-tickets">';
+				foreach ( $ticket_ids as $ticket_id ) {
+					// Ticket block
+					$blocks['tickets'] .= '<!-- wp:tribe/tickets-item {"hasBeenCreated":true,"ticketId":' . $ticket_id . '} -->
+<div class="wp-block-tribe-tickets-item"></div>
+<!-- /wp:tribe/tickets-item -->';
+				}
+				// Closing block
+				$blocks['tickets'] .= '</div>
+<!-- /wp:tribe/tickets -->';
+			}
+		}
 
 		return implode( "\n", $blocks );
 	}
