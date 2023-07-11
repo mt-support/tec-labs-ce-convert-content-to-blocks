@@ -339,6 +339,10 @@ class Plugin extends Service_Provider {
 			'</ol>',
 			'<li>',
 			'</li>',
+			'<blockquote>',
+			'</blockquote>',
+			'<code>',
+			'</code>',
 			'<p>',
 		];
 		$replace = [
@@ -348,10 +352,23 @@ class Plugin extends Service_Provider {
 			'</ol>#$@',
 			'#$@<li>',
 			'</li>#$@',
+			'#$@<blockquote>',
+			'</blockquote>#$@',
+			'#$@<code>',
+			'</code>#$@',
 			'#$@<p>',
 		];
 
 		$content = str_replace( $search, $replace, $content );
+
+		// Headings.
+		$pattern = '/<h([1-6])>/';
+		$replacement = '#$@<h$1>';
+		$content = preg_replace($pattern, $replacement, $content);
+
+		$pattern = '/<\/h([1-6])>/';
+		$replacement = '</h$1>#$@';
+		$content = preg_replace($pattern, $replacement, $content);
 
 		// Split string into array based on '#$@' separator.
 		$content_array = explode( "#$@", $content );
@@ -368,10 +385,18 @@ class Plugin extends Service_Provider {
 			}
 
 			$start_replacements = [
-				'<ul>'     => '<!-- wp:list --><ul>',
-				'<ol>'     => '<!-- wp:list {"ordered":true} --><ol>',
-				'<li>'     => '<!-- wp:list-item --><li>',
-				'<p>'      => '<!-- wp:paragraph --><p>',
+				'<ul>'         => '<!-- wp:list --><ul>',
+				'<ol>'         => '<!-- wp:list {"ordered":true} --><ol>',
+				'<li>'         => '<!-- wp:list-item --><li>',
+				'<p>'          => '<!-- wp:paragraph --><p>',
+				'<h1>'         => '<!-- wp:heading {"level":1} --><h1 class="wp-block-heading">',
+				'<h2>'         => '<!-- wp:heading {"level":2} --><h2 class="wp-block-heading">',
+				'<h3>'         => '<!-- wp:heading {"level":3} --><h3 class="wp-block-heading">',
+				'<h4>'         => '<!-- wp:heading {"level":4} --><h4 class="wp-block-heading">',
+				'<h5>'         => '<!-- wp:heading {"level":5} --><h5 class="wp-block-heading">',
+				'<h6>'         => '<!-- wp:heading {"level":6} --><h6 class="wp-block-heading">',
+				'<blockquote>' => '<!-- wp:quote --><blockquote class="wp-block-quote"><!-- wp:paragraph --><p>',
+				'<code>'       => '<!-- wp:code --><pre class="wp-block-code"><code>',
 				//"\r\n\r\n" => "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>",
 				//"\r\n"     => "<br>",
 			];
@@ -379,8 +404,8 @@ class Plugin extends Service_Provider {
 			foreach ( $start_replacements as $search => $replace ) {
 				if ( str_starts_with( $item, $search ) ) {
 					$item = str_replace( $search, $replace, $item );
-					// For paragraphs replace line breaks.
-					if ( $search == '<p>' ) {
+					// For paragraphs and blockquoted replace line breaks.
+					if ( $search == '<p>' || $search == '<blockquote>' ) {
 						$item = $this->maybe_replace_linebreaks( $item );
 					}
 					break;
@@ -388,10 +413,18 @@ class Plugin extends Service_Provider {
 			}
 
 			$end_replacements = [
-				'</li>' => '</li><!-- /wp:list-item -->',
-				'</p>'  => '</p><!-- /wp:paragraph -->',
-				'</ul>' => '</ul><!-- /wp:list -->',
-				'</ol>' => '</ol><!-- /wp:list -->',
+				'</li>'         => '</li><!-- /wp:list-item -->',
+				'</p>'          => '</p><!-- /wp:paragraph -->',
+				'</ul>'         => '</ul><!-- /wp:list -->',
+				'</ol>'         => '</ol><!-- /wp:list -->',
+				'</h1>'         => '</h1><!-- /wp:heading -->',
+				'</h2>'         => '</h2><!-- /wp:heading -->',
+				'</h3>'         => '</h3><!-- /wp:heading -->',
+				'</h4>'         => '</h4><!-- /wp:heading -->',
+				'</h5>'         => '</h5><!-- /wp:heading -->',
+				'</h6>'         => '</h6><!-- /wp:heading -->',
+				'</blockquote>' => '</p><!-- /wp:paragraph --></blockquote><!-- /wp:quote -->',
+				'</code>'       => '</code></pre><!-- /wp:code -->',
 			];
 
 			foreach ( $end_replacements as $search => $replace ) {
