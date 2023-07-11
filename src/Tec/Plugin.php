@@ -410,30 +410,6 @@ class Plugin extends Service_Provider {
 				$item = $this->maybe_replace_linebreaks( $item );
 			}
 
-
-			/*if ( str_starts_with( $item, '<ul>' ) ) {
-				$item = str_replace( '<ul>', '<!-- wp:list --><ul>', $item );
-			} elseif ( str_starts_with( $item, '<ol>' ) ) {
-				$item = str_replace( '<ol>', '<!-- wp:list {"ordered":true} --><ol>', $item );
-			} elseif ( str_starts_with( $item, '<li>' ) ) {
-				$item = str_replace( '<li>', '<!-- wp:list-item --><li>', $item );
-				$item = str_replace( '</li>', '</li><!-- /wp:list-item -->', $item );
-			} elseif ( str_starts_with( $item, '<p>' ) ) {
-				$item = str_replace( '<p>', '<!-- wp:paragraph --><p>', $item );
-				$item = str_replace( [ "\r\n\r\n", "\r\n" ], [ "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>", "<br>" ], $item );
-			} else {
-				$item = '<!-- wp:paragraph --><p>' . $item . '</p><!-- /wp:paragraph -->';
-				$item = str_replace( [ "\r\n\r\n", "\r\n" ], [ "</p><!-- /wp:paragraph -->\n<!-- wp:paragraph --><p>", "<br>" ], $item );
-			}
-
-			if ( str_ends_with( $item, '</ul>' ) ) {
-				$item = str_replace( '</ul>', '</ul><!-- /wp:list -->', $item );
-			} elseif ( str_ends_with( $item, '</ol>' ) ) {
-				$item = str_replace( '</ol>', '</ol><!-- /wp:list -->', $item );
-			} elseif ( str_ends_with( $item, '</p>' ) ) {
-				$item = str_replace( '</p>', '</p><!-- /wp:paragraph -->', $item );
-			}*/
-
 			$new_content[] = $item;
 		}
 
