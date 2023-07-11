@@ -222,8 +222,8 @@ class Plugin extends Service_Provider {
 	 * @return string The content reformatted for block editor.
 	 */
 	function convert_to_blocks( array $data ): string {
-		//$content = $data['post_content'];
-		$content = str_replace( [ "\n\n", "\n" ], [ "</p><p>", "<br>" ], $data['post_content'] );
+		$content = $data['post_content'];
+		//$content = str_replace( [ "\n\n", "\n" ], [ "</p><p>", "<br>" ], $data['post_content'] );
 
 		$post_id = intval( $data['ID'] );
 		// Get the custom fields
@@ -236,9 +236,10 @@ class Plugin extends Service_Provider {
 		$blocks['featured_image'] = '<!-- wp:tribe/featured-image /-->';
 
 		// Content
-		$blocks['content_start']  = '<!-- wp:paragraph {"placeholder":"Add Description..."} -->';
-		$blocks['content']        = '<p>' . $content . '</p>';
-		$blocks['content_end']    = '<!-- /wp:paragraph -->';
+		//$blocks['content_start']  = '<!-- wp:paragraph {"placeholder":"Add Description..."} -->';
+		//$blocks['content']        = '<p>' . $this->process_content( $content ) . '</p>';
+		$blocks['content']        = $this->convert_content_to_blocks( $content );
+		//$blocks['content_end']    = '<!-- /wp:paragraph -->';
 
 		// Cost
 		if ( ! empty( tribe_get_event_meta( $data['ID'], '_EventCost', true ) ) ) {
@@ -319,6 +320,130 @@ class Plugin extends Service_Provider {
 	 */
 	protected function cutoff_date() {
 		return "2023-06-10 00:00:00";
+	}
+
+	/**
+	 * Convert content to blocks.
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	public function convert_content_to_blocks( string $content ) : string {
+
+		// Add a '#$@' separator to the HTML tags for easier splitting.
+		$search  = [
+			'<ul>',
+			'</ul>',
+			'<ol>',
+			'</ol>',
+			'<li>',
+			'</li>',
+			'<p>',
+		];
+		$replace = [
+			'#$@<ul>',
+			'</ul>#$@',
+			'#$@<ol>',
+			'</ol>#$@',
+			'#$@<li>',
+			'</li>#$@',
+			'#$@<p>',
+		];
+
+		$content = str_replace( $search, $replace, $content );
+
+		// Split string into array based on '#$@' separator.
+		$content_array = explode( "#$@", $content );
+		$new_content = [];
+
+		// Iterate through the array and process each item based on the starting/ending tag.
+		foreach ( $content_array as $item ) {
+
+			// Trim whitespaces
+			$item = trim( $item );
+
+			if ( empty( $item ) ) {
+				continue;
+			}
+
+			$start_replacements = [
+				'<ul>'     => '<!-- wp:list --><ul>',
+				'<ol>'     => '<!-- wp:list {"ordered":true} --><ol>',
+				'<li>'     => '<!-- wp:list-item --><li>',
+				'<p>'      => '<!-- wp:paragraph --><p>',
+				//"\r\n\r\n" => "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>",
+				//"\r\n"     => "<br>",
+			];
+
+			foreach ( $start_replacements as $search => $replace ) {
+				if ( str_starts_with( $item, $search ) ) {
+					$item = str_replace( $search, $replace, $item );
+					// For paragraphs replace line breaks.
+					if ( $search == '<p>' ) {
+						$item = $this->maybe_replace_linebreaks( $item );
+					}
+					break;
+				}
+			}
+
+			$end_replacements = [
+				'</li>' => '</li><!-- /wp:list-item -->',
+				'</p>'  => '</p><!-- /wp:paragraph -->',
+				'</ul>' => '</ul><!-- /wp:list -->',
+				'</ol>' => '</ol><!-- /wp:list -->',
+			];
+
+			foreach ( $end_replacements as $search => $replace ) {
+				if ( str_ends_with( $item, $search ) ) {
+					$item = str_replace( $search, $replace, $item );
+					break;
+				}
+			}
+
+			// If it's not a block, make it a paragraph.
+			if (
+				! str_starts_with( $item, '<!-- wp:' )
+				&& ! str_ends_with( $item, '-->' )
+			) {
+				$item = '<!-- wp:paragraph --><p>' . $item . '</p><!-- /wp:paragraph -->';
+				$item = $this->maybe_replace_linebreaks( $item );
+			}
+
+
+			/*if ( str_starts_with( $item, '<ul>' ) ) {
+				$item = str_replace( '<ul>', '<!-- wp:list --><ul>', $item );
+			} elseif ( str_starts_with( $item, '<ol>' ) ) {
+				$item = str_replace( '<ol>', '<!-- wp:list {"ordered":true} --><ol>', $item );
+			} elseif ( str_starts_with( $item, '<li>' ) ) {
+				$item = str_replace( '<li>', '<!-- wp:list-item --><li>', $item );
+				$item = str_replace( '</li>', '</li><!-- /wp:list-item -->', $item );
+			} elseif ( str_starts_with( $item, '<p>' ) ) {
+				$item = str_replace( '<p>', '<!-- wp:paragraph --><p>', $item );
+				$item = str_replace( [ "\r\n\r\n", "\r\n" ], [ "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>", "<br>" ], $item );
+			} else {
+				$item = '<!-- wp:paragraph --><p>' . $item . '</p><!-- /wp:paragraph -->';
+				$item = str_replace( [ "\r\n\r\n", "\r\n" ], [ "</p><!-- /wp:paragraph -->\n<!-- wp:paragraph --><p>", "<br>" ], $item );
+			}
+
+			if ( str_ends_with( $item, '</ul>' ) ) {
+				$item = str_replace( '</ul>', '</ul><!-- /wp:list -->', $item );
+			} elseif ( str_ends_with( $item, '</ol>' ) ) {
+				$item = str_replace( '</ol>', '</ol><!-- /wp:list -->', $item );
+			} elseif ( str_ends_with( $item, '</p>' ) ) {
+				$item = str_replace( '</p>', '</p><!-- /wp:paragraph -->', $item );
+			}*/
+
+			$new_content[] = $item;
+		}
+
+		$content = implode( "\n", $new_content );
+
+		return $content;
+	}
+
+	function maybe_replace_linebreaks( string $string ) : string {
+		return str_replace( [ "\r\n\r\n", "\r\n" ], [ "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>", "<br>" ], $string );
 	}
 
 	/**
