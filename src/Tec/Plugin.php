@@ -223,7 +223,6 @@ class Plugin extends Service_Provider {
 	 */
 	function convert_to_blocks( array $data ): string {
 		$content = $data['post_content'];
-		//$content = str_replace( [ "\n\n", "\n" ], [ "</p><p>", "<br>" ], $data['post_content'] );
 
 		$post_id = intval( $data['ID'] );
 		// Get the custom fields
@@ -236,10 +235,7 @@ class Plugin extends Service_Provider {
 		$blocks['featured_image'] = '<!-- wp:tribe/featured-image /-->';
 
 		// Content
-		//$blocks['content_start']  = '<!-- wp:paragraph {"placeholder":"Add Description..."} -->';
-		//$blocks['content']        = '<p>' . $this->process_content( $content ) . '</p>';
 		$blocks['content']        = $this->convert_content_to_blocks( $content );
-		//$blocks['content_end']    = '<!-- /wp:paragraph -->';
 
 		// Cost
 		if ( ! empty( tribe_get_event_meta( $data['ID'], '_EventCost', true ) ) ) {
@@ -274,6 +270,9 @@ class Plugin extends Service_Provider {
 
 		// Tickets
 		$default_ce_provider = tribe( 'community-tickets.main' )->get_option( 'default_provider_handler', 'TEC_Tickets_Commerce_Module' );
+
+		// Choose handler
+		// @todo Check if Tickets Commerce is right.
 		if ( $default_ce_provider == 'Tribe__Tickets_Plus__Commerce__WooCommerce__Main' ) {
 			$handler = 'tickets-plus.commerce.woo';
 		}
@@ -287,34 +286,32 @@ class Plugin extends Service_Provider {
 			// Display the blocks
 			if ( ! empty( $ticket_ids ) ) {
 				// Opening block
-				$blocks['tickets'] = '<!-- wp:tribe/tickets -->
-<div class="wp-block-tribe-tickets">';
+				$blocks['tickets'] = '<!-- wp:tribe/tickets --><div class="wp-block-tribe-tickets">';
 				foreach ( $ticket_ids as $ticket_id ) {
 					// Ticket block
-					$blocks['tickets'] .= '<!-- wp:tribe/tickets-item {"hasBeenCreated":true,"ticketId":' . $ticket_id . '} -->
-<div class="wp-block-tribe-tickets-item"></div>
-<!-- /wp:tribe/tickets-item -->';
+					$blocks['tickets'] .= '<!-- wp:tribe/tickets-item {"hasBeenCreated":true,"ticketId":' . $ticket_id . '} --><div class="wp-block-tribe-tickets-item"></div><!-- /wp:tribe/tickets-item -->';
 				}
 				// Closing block
-				$blocks['tickets'] .= '</div>
-<!-- /wp:tribe/tickets -->';
+				$blocks['tickets'] .= '</div><!-- /wp:tribe/tickets -->';
 			}
-
-			// Sharing / Subscribe / Add to Calendar
-			$blocks['sharing']       = '<!-- wp:tribe/event-links /-->';
-
-			// Related events
-			$blocks['related']       = '<!-- wp:tribe/related-events /-->';
-
-			// Comments
-			$blocks['comments']      = '<!-- wp:post-comments-form /-->';
 		}
+
+		// Sharing / Subscribe / Add to Calendar
+		$blocks['sharing']       = '<!-- wp:tribe/event-links /-->';
+
+		// Related events
+		$blocks['related']       = '<!-- wp:tribe/related-events /-->';
+
+		// Comments
+		$blocks['comments']      = '<!-- wp:post-comments-form /-->';
 
 		return implode( "\n", $blocks );
 	}
 
 	/**
 	 * The cutoff date. Events published before this date should not be converted.
+	 *
+	 * @todo Make this a setting.
 	 *
 	 * @return string The cutoff date.
 	 */
@@ -325,52 +322,54 @@ class Plugin extends Service_Provider {
 	/**
 	 * Convert content to blocks.
 	 *
-	 * @param string $content
+	 * @param string $content The submitted content.
 	 *
-	 * @return string
+	 * @return string The content with block markup.
 	 */
 	public function convert_content_to_blocks( string $content ) : string {
 
 		// Add a '#$@' separator to the HTML tags for easier splitting.
 		$search  = [
-			'<ul>',
-			'</ul>',
-			'<ol>',
-			'</ol>',
-			'<li>',
-			'</li>',
-			'<blockquote>',
-			'</blockquote>',
-			'<code>',
-			'</code>',
 			'<p>',
+			'<ul>',
+			'<ol>',
+			'<li>',
+			'<code>',
+			'<blockquote>',
+			'</ul>',
+			'</ol>',
+			'</li>',
+			'</code>',
+			'</blockquote>',
 		];
 		$replace = [
-			'#$@<ul>',
-			'</ul>#$@',
-			'#$@<ol>',
-			'</ol>#$@',
-			'#$@<li>',
-			'</li>#$@',
-			'#$@<blockquote>',
-			'</blockquote>#$@',
-			'#$@<code>',
-			'</code>#$@',
 			'#$@<p>',
+			'#$@<ul>',
+			'#$@<ol>',
+			'#$@<li>',
+			'#$@<code>',
+			'#$@<blockquote>',
+			'</ul>#$@',
+			'</ol>#$@',
+			'</li>#$@',
+			'</code>#$@',
+			'</blockquote>#$@',
 		];
 
 		$content = str_replace( $search, $replace, $content );
 
-		// Headings.
+		// Add a '#$@' separator to the HTML heading tags for easier splitting.
+		// Opening tags
 		$pattern = '/<h([1-6])>/';
 		$replacement = '#$@<h$1>';
 		$content = preg_replace($pattern, $replacement, $content);
 
+		// Closing tags
 		$pattern = '/<\/h([1-6])>/';
 		$replacement = '</h$1>#$@';
 		$content = preg_replace($pattern, $replacement, $content);
 
-		// Split string into array based on '#$@' separator.
+		// Split content string into an array based on the '#$@' separator.
 		$content_array = explode( "#$@", $content );
 		$new_content = [];
 
@@ -380,6 +379,7 @@ class Plugin extends Service_Provider {
 			// Trim whitespaces
 			$item = trim( $item );
 
+			// Skip empty lines, which come from two separators next to each other.
 			if ( empty( $item ) ) {
 				continue;
 			}
@@ -397,14 +397,13 @@ class Plugin extends Service_Provider {
 				'<h6>'         => '<!-- wp:heading {"level":6} --><h6 class="wp-block-heading">',
 				'<blockquote>' => '<!-- wp:quote --><blockquote class="wp-block-quote"><!-- wp:paragraph --><p>',
 				'<code>'       => '<!-- wp:code --><pre class="wp-block-code"><code>',
-				//"\r\n\r\n" => "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>",
-				//"\r\n"     => "<br>",
 			];
 
+			// Go through each replacement
 			foreach ( $start_replacements as $search => $replace ) {
 				if ( str_starts_with( $item, $search ) ) {
 					$item = str_replace( $search, $replace, $item );
-					// For paragraphs and blockquoted replace line breaks.
+					// For paragraphs and blockquotes replace line breaks.
 					if ( $search == '<p>' || $search == '<blockquote>' ) {
 						$item = $this->maybe_replace_linebreaks( $item );
 					}
@@ -427,6 +426,7 @@ class Plugin extends Service_Provider {
 				'</code>'       => '</code></pre><!-- /wp:code -->',
 			];
 
+			// Go through each replacement
 			foreach ( $end_replacements as $search => $replace ) {
 				if ( str_ends_with( $item, $search ) ) {
 					$item = str_replace( $search, $replace, $item );
@@ -434,7 +434,7 @@ class Plugin extends Service_Provider {
 				}
 			}
 
-			// If it's not a block, make it a paragraph.
+			// If it's not any kind of block, make it a paragraph.
 			if (
 				! str_starts_with( $item, '<!-- wp:' )
 				&& ! str_ends_with( $item, '-->' )
@@ -446,11 +446,19 @@ class Plugin extends Service_Provider {
 			$new_content[] = $item;
 		}
 
+		// Assemble the new content with the block code.
 		$content = implode( "\n", $new_content );
 
 		return $content;
 	}
 
+	/**
+	 * Try to replace the line breaks with paragraphs or <br>s.
+	 *
+	 * @param string $string The string to check for line breaks.
+	 *
+	 * @return string The string with block markup.
+	 */
 	function maybe_replace_linebreaks( string $string ) : string {
 		return str_replace( [ "\r\n\r\n", "\r\n" ], [ "</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>", "<br>" ], $string );
 	}
