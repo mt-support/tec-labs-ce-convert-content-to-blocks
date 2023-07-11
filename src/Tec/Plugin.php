@@ -222,6 +222,7 @@ class Plugin extends Service_Provider {
 	 * @return string The content reformatted for block editor.
 	 */
 	function convert_to_blocks( array $data ): string {
+		//$content = $data['post_content'];
 		$content = str_replace( [ "\n\n", "\n" ], [ "</p><p>", "<br>" ], $data['post_content'] );
 
 		$post_id = intval( $data['ID'] );
@@ -231,11 +232,6 @@ class Plugin extends Service_Provider {
 		// Assemble code of blocks
 		$blocks['datetime']       = '<!-- wp:tribe/event-datetime /-->';
 
-		// Cost
-		if ( ! empty( tribe_get_event_meta( $data['ID'], '_EventCost', true ) ) ) {
-			$blocks['cost'] = '<!-- wp:tribe/event-price {"costDescription":"This is the price"} /-->';
-		}
-
 		// Featured image
 		$blocks['featured_image'] = '<!-- wp:tribe/featured-image /-->';
 
@@ -244,12 +240,13 @@ class Plugin extends Service_Provider {
 		$blocks['content']        = '<p>' . $content . '</p>';
 		$blocks['content_end']    = '<!-- /wp:paragraph -->';
 
-		// Custom fields
-		if ( $custom_fields ) {
-			foreach ( $custom_fields as $field ) {
-				$blocks[ $field['name'] ] = '<!-- wp:tribe/field-' . str_replace( '_', '', $field['name'] ) . ' /-->';
-			}
+		// Cost
+		if ( ! empty( tribe_get_event_meta( $data['ID'], '_EventCost', true ) ) ) {
+			$blocks['cost'] = '<!-- wp:tribe/event-price {"costDescription":"This is the price"} /-->';
 		}
+
+		// Event website
+		$blocks['event_website'] = '<!-- wp:tribe/event-website {"urlLabel":"Button text"} /-->';
 
 		// Organizers
 		// Grabbing the organizers from the database so we also have the newly created ones.
@@ -264,8 +261,12 @@ class Plugin extends Service_Provider {
 		// Venue
 		$blocks['venue']         = '<!-- wp:tribe/event-venue /-->';
 
-		// Event website
-		$blocks['event_website'] = '<!-- wp:tribe/event-website {"urlLabel":"Button text"} /-->';
+		// Custom fields
+		if ( $custom_fields ) {
+			foreach ( $custom_fields as $field ) {
+				$blocks[ $field['name'] ] = '<!-- wp:tribe/field-' . str_replace( '_', '', $field['name'] ) . ' /-->';
+			}
+		}
 
 		// RSVP
 		$blocks['rsvp']          = '<!-- wp:tribe/rsvp /-->';
