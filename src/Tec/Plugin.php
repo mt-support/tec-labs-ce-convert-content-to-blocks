@@ -267,14 +267,8 @@ class Plugin extends Service_Provider {
 		// Event website
 		$blocks['event_website'] = '<!-- wp:tribe/event-website {"urlLabel":"Button text"} /-->';
 
-		// Sharing / Subscribe / Add to Calendar
-		$blocks['sharing']       = '<!-- wp:tribe/event-links /-->';
-
-		// Related events
-		$blocks['related']       = '<!-- wp:tribe/related-events /-->';
-
-		// Comments
-		$blocks['comments']      = '<!-- wp:post-comments-form /-->';
+		// RSVP
+		$blocks['rsvp']          = '<!-- wp:tribe/rsvp /-->';
 
 		// Tickets
 		$default_ce_provider = tribe( 'community-tickets.main' )->get_option( 'default_provider_handler', 'TEC_Tickets_Commerce_Module' );
@@ -303,6 +297,15 @@ class Plugin extends Service_Provider {
 				$blocks['tickets'] .= '</div>
 <!-- /wp:tribe/tickets -->';
 			}
+
+			// Sharing / Subscribe / Add to Calendar
+			$blocks['sharing']       = '<!-- wp:tribe/event-links /-->';
+
+			// Related events
+			$blocks['related']       = '<!-- wp:tribe/related-events /-->';
+
+			// Comments
+			$blocks['comments']      = '<!-- wp:post-comments-form /-->';
 		}
 
 		return implode( "\n", $blocks );
