@@ -246,7 +246,7 @@ class Plugin extends Service_Provider {
 		$blocks['event_website'] = '<!-- wp:tribe/event-website {"urlLabel":"Button text"} /-->';
 
 		// Organizers
-		// Grabbing the organizers from the database so we also have the newly created ones.
+		// Grabbing the organizers from the database, so we also have the newly created ones.
 		$organizers = tribe_get_organizers( false, - 1, true, [ 'event' => $data['ID'] ] );
 		if ( ! empty( $organizers ) ) {
 			foreach ( $organizers as $organizer ) {
@@ -256,7 +256,14 @@ class Plugin extends Service_Provider {
 		}
 
 		// Venue
-		$blocks['venue']         = '<!-- wp:tribe/event-venue /-->';
+		// Grabbing the venues from the database, so we also have the newly created ones.
+		$venues = tribe_get_venues( false, - 1, true, [ 'event' => $data['ID'] ] );
+		if ( ! empty( $venues ) ) {
+			foreach ( $venues as $venue ) {
+				$block_name            = 'venue_' . $venue->ID;
+				$blocks[ $block_name ] = '<!-- wp:tribe/event-venue {"venue":' . $venue->ID . '} /-->';
+			}
+		}
 
 		// Custom fields
 		if ( $custom_fields ) {
