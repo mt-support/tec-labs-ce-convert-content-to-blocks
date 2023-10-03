@@ -225,6 +225,7 @@ class Plugin extends Service_Provider {
 		$content = $data['post_content'];
 
 		$post_id = intval( $data['ID'] );
+
 		// Get the custom fields
 		$custom_fields = tribe_get_option( 'custom-fields', false );
 
@@ -238,7 +239,7 @@ class Plugin extends Service_Provider {
 		$blocks['content']        = $this->convert_content_to_blocks( $content );
 
 		// Cost
-		if ( ! empty( tribe_get_event_meta( $data['ID'], '_EventCost', true ) ) ) {
+		if ( ! empty( tribe_get_event_meta( $post_id, '_EventCost', true ) ) ) {
 			$blocks['cost'] = '<!-- wp:tribe/event-price {"costDescription":"This is the price"} /-->';
 		}
 
@@ -246,24 +247,12 @@ class Plugin extends Service_Provider {
 		$blocks['event_website'] = '<!-- wp:tribe/event-website {"urlLabel":"Button text"} /-->';
 
 		// Organizers
-		// Grabbing the organizers from the database, so we also have the newly created ones.
-		$organizers = tribe_get_organizers( false, - 1, true, [ 'event' => $data['ID'] ] );
-		if ( ! empty( $organizers ) ) {
-			foreach ( $organizers as $organizer ) {
-				$block_name            = 'organizer_' . $organizer->ID;
-				$blocks[ $block_name ] = '<!-- wp:tribe/event-organizer {"organizer":' . $organizer->ID . '} /-->';
-			}
-		}
+		$organizer_blocks = $this->fetch_organizers( $post_id );
+		$blocks = array_merge( $blocks, $organizer_blocks );
 
 		// Venue
-		// Grabbing the venues from the database, so we also have the newly created ones.
-		$venues = tribe_get_venues( false, - 1, true, [ 'event' => $data['ID'] ] );
-		if ( ! empty( $venues ) ) {
-			foreach ( $venues as $venue ) {
-				$block_name            = 'venue_' . $venue->ID;
-				$blocks[ $block_name ] = '<!-- wp:tribe/event-venue {"venue":' . $venue->ID . '} /-->';
-			}
-		}
+		$venue_blocks = $this->fetch_venues( $new_post_id );
+		$blocks = array_merge( $blocks, $venue_blocks );
 
 		// Custom fields
 		if ( $custom_fields ) {
@@ -313,6 +302,48 @@ class Plugin extends Service_Provider {
 		$blocks['comments']      = '<!-- wp:post-comments-form /-->';
 
 		return implode( "\n", $blocks );
+	}
+
+	/**
+	 * Grabbing the organizers from the database, so we also have the newly created ones.
+	 *
+	 * @param int $post_id The post ID of the event that is being created/modified.
+	 *
+	 * @return array An array of block formatted content.
+	 */
+	public function fetch_organizers( int $post_id ): array {
+		$blocks = [];
+		$organizer_ids = get_post_meta( $post_id, '_EventOrganizerID', false );
+
+		if ( ! empty( $organizer_ids ) ) {
+			foreach ( $organizer_ids as $organizer_id ) {
+				$block_name            = 'organizer_' . $organizer_id;
+				$blocks[ $block_name ] = '<!-- wp:tribe/event-organizer {"organizer":' . $organizer_id . '} /-->';
+			}
+		}
+
+		return $blocks;
+	}
+
+	/**
+	 * Grabbing the venues from the database, so we also have the newly created ones.
+	 *
+	 * @param int $post_id The post ID of the event that is being created/modified.
+	 *
+	 * @return array An array of block formatted content.
+	 */
+	public function fetch_venues( int $post_id ): array {
+		$blocks = [];
+		$venue_ids = get_post_meta( $post_id, '_EventVenueID', false );
+
+		if ( ! empty( $venue_ids ) ) {
+			foreach ( $venue_ids as $venue_id ) {
+				$block_name            = 'venue_' . $venue_id;
+				$blocks[ $block_name ] = '<!-- wp:tribe/event-venue {"venue":' . $venue_id . '} /-->';
+			}
+		}
+
+		return $blocks;
 	}
 
 	/**
