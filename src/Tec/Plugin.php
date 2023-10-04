@@ -226,9 +226,6 @@ class Plugin extends Service_Provider {
 
 		$post_id = intval( $data['ID'] );
 
-		// Get the custom fields
-		$custom_fields = tribe_get_option( 'custom-fields', false );
-
 		// Assemble code of blocks
 		$blocks['datetime']       = '<!-- wp:tribe/event-datetime /-->';
 
@@ -254,41 +251,54 @@ class Plugin extends Service_Provider {
 		$venue_blocks = $this->fetch_venues( $post_id );
 		$blocks = array_merge( $blocks, $venue_blocks );
 
-		// Custom fields
-		if ( $custom_fields ) {
-			foreach ( $custom_fields as $field ) {
-				$blocks[ $field['name'] ] = '<!-- wp:tribe/field-' . str_replace( '_', '', $field['name'] ) . ' /-->';
+		// Get the custom fields
+		if ( class_exists( 'Tribe__Events__Pro__Main' ) ) {
+			$custom_fields = tribe_get_option( 'custom-fields', false );
+			if ( $custom_fields ) {
+				foreach ( $custom_fields as $field ) {
+					$blocks[ $field['name'] ] = '<!-- wp:tribe/field-' . str_replace( '_', '', $field['name'] ) . ' /-->';
+				}
 			}
 		}
 
 		// RSVP
-		$blocks['rsvp']          = '<!-- wp:tribe/rsvp /-->';
+		if (
+			class_exists( 'Tribe__Tickets__Main' )
+		     && class_exists( 'Tribe__Events__Community__Tickets__Main' )
+		) {
+			$blocks['rsvp'] = '<!-- wp:tribe/rsvp /-->';
+		}
 
 		// Tickets
-		$default_ce_provider = tribe( 'community-tickets.main' )->get_option( 'default_provider_handler', 'TEC_Tickets_Commerce_Module' );
+		if (
+			class_exists( 'Tribe__Tickets__Main' )
+			&& class_exists( 'Tribe__Tickets_Plus__Main' )
+			&& class_exists( 'Tribe__Events__Community__Tickets__Main' )
+		) {
+			$default_ce_provider = tribe( 'community-tickets.main' )->get_option( 'default_provider_handler', 'TEC_Tickets_Commerce_Module' );
 
-		// Choose handler
-		// @todo Check if Tickets Commerce is right.
-		if ( $default_ce_provider == 'Tribe__Tickets_Plus__Commerce__WooCommerce__Main' ) {
-			$handler = 'tickets-plus.commerce.woo';
-		}
-		elseif ( $default_ce_provider == 'TEC_Tickets_Commerce_Module' ) {
-			$handler = 'tickets.handler';
-		}
+			// Choose handler
+			// @todo Check if Tickets Commerce is right.
+			if ( $default_ce_provider == 'Tribe__Tickets_Plus__Commerce__WooCommerce__Main' ) {
+				$handler = 'tickets-plus.commerce.woo';
+			} elseif ( $default_ce_provider == 'TEC_Tickets_Commerce_Module' ) {
+				$handler = 'tickets.handler';
+			}
 
-		if ( isset( $handler ) ) {
-			$ticket_ids = tribe( $handler )->get_tickets_ids( $post_id );
+			if ( isset( $handler ) ) {
+				$ticket_ids = tribe( $handler )->get_tickets_ids( $post_id );
 
-			// Display the blocks
-			if ( ! empty( $ticket_ids ) ) {
-				// Opening block
-				$blocks['tickets'] = '<!-- wp:tribe/tickets --><div class="wp-block-tribe-tickets">';
-				foreach ( $ticket_ids as $ticket_id ) {
-					// Ticket block
-					$blocks['tickets'] .= '<!-- wp:tribe/tickets-item {"hasBeenCreated":true,"ticketId":' . $ticket_id . '} --><div class="wp-block-tribe-tickets-item"></div><!-- /wp:tribe/tickets-item -->';
+				// Display the blocks
+				if ( ! empty( $ticket_ids ) ) {
+					// Opening block
+					$blocks['tickets'] = '<!-- wp:tribe/tickets --><div class="wp-block-tribe-tickets">';
+					foreach ( $ticket_ids as $ticket_id ) {
+						// Ticket block
+						$blocks['tickets'] .= '<!-- wp:tribe/tickets-item {"hasBeenCreated":true,"ticketId":' . $ticket_id . '} --><div class="wp-block-tribe-tickets-item"></div><!-- /wp:tribe/tickets-item -->';
+					}
+					// Closing block
+					$blocks['tickets'] .= '</div><!-- /wp:tribe/tickets -->';
 				}
-				// Closing block
-				$blocks['tickets'] .= '</div><!-- /wp:tribe/tickets -->';
 			}
 		}
 
