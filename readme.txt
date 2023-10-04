@@ -5,7 +5,7 @@ Tags: events, calendar
 Requires at least: 6.0.0
 Tested up to: 6.2.2
 Requires PHP: 8.0
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GPL version 3 or any later version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,7 +37,11 @@ We're always interested in your feedback and our [Help Desk](https://support.the
 
 == Changelog ==
 
-= [2.5.0] TBD =
+= [2.5.1] 2023-10-03 =
+
+* Fix - Modified how organizer and venue IDs are fetched so they are saved correctly in different scenarios.
+
+= [2.5.0] 2023-09-18 =
 
 * Enhancement - Moved the code to the extension template.
 

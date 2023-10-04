@@ -27,7 +27,7 @@ class Plugin extends Service_Provider {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.5.0';
+	const VERSION = '2.5.1';
 
 	/**
 	 * Stores the base slug for the plugin.
@@ -251,7 +251,7 @@ class Plugin extends Service_Provider {
 		$blocks = array_merge( $blocks, $organizer_blocks );
 
 		// Venue
-		$venue_blocks = $this->fetch_venues( $new_post_id );
+		$venue_blocks = $this->fetch_venues( $post_id );
 		$blocks = array_merge( $blocks, $venue_blocks );
 
 		// Custom fields
