@@ -39,7 +39,8 @@ We're always interested in your feedback and our [Help Desk](https://support.the
 
 = [2.5.1] 2023-10-03 =
 
-* Fix - Modified how organizer and venue IDs are fetched so they are saved correctly in different scenarios.
+* Fix - Modified how organizer and venue IDs are fetched, so they are saved correctly in different scenarios.
+* Fix - Added missing plugin dependency checks to avoid errors on form submission.
 
 = [2.5.0] 2023-09-18 =
 
