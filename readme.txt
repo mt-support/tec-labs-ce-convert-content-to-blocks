@@ -5,7 +5,7 @@ Tags: events, calendar
 Requires at least: 6.0.0
 Tested up to: 6.2.2
 Requires PHP: 8.0
-Stable tag: 2.5.1
+Stable tag: 2.5.1-dev
 License: GPL version 3 or any later version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,9 +13,14 @@ Convert the event content submitted through Community Events to block editor for
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+The extension will attempt to convert the event content submitted through Community Events to block editor format.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and Markdown parsed.
+== Usage ==
+
+The following two settings are required to be enabled for the extension to work.
+
+* Events > Settings > General > Activate Block Editor for Events
+* Events > Settings > Community > Use visual editor for event descriptions
 
 == Installation ==
 
@@ -37,7 +42,7 @@ We're always interested in your feedback and our [Help Desk](https://support.the
 
 == Changelog ==
 
-= [2.5.1] 2023-10-03 =
+= [2.5.1-dev] 2023-10-03 =
 
 * Fix - Modified how organizer and venue IDs are fetched, so they are saved correctly in different scenarios.
 * Fix - Added missing plugin dependency checks to avoid errors on form submission.

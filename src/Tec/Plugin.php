@@ -27,7 +27,7 @@ class Plugin extends Service_Provider {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.5.1';
+	const VERSION = '2.5.1-dev';
 
 	/**
 	 * Stores the base slug for the plugin.

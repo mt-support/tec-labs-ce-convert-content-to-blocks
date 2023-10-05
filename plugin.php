@@ -4,7 +4,7 @@
  * Plugin URI:        https://theeventscalendar.com/extensions/ce-convert-content-to-blocks
  * GitHub Plugin URI: https://github.com/mt-support/tec-labs-ce-convert-content-to-blocks
  * Description:       Convert the event content submitted through Community Events to block editor format. 
- * Version:           2.5.1
+ * Version:           2.5.1-dev
  * Author:            The Events Calendar
  * Author URI:        https://evnt.is/1971
  * License:           GPL version 3 or any later version
@@ -63,12 +63,48 @@ function tribe_extension_ce_convert_content_to_blocks() {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		}
 
+		remove_activation_timestamp();
+
 		deactivate_plugins( __FILE__, true );
 		return;
 	}
 
 	tribe_register_provider( '\Tribe\Extensions\ConvertContentToBlocks\Plugin' );
 }
+
+
+/**
+ *  Function to save activation timestamp in the options table if it doesn't exist.
+ *
+ * @return void
+ */
+function save_activation_timestamp() {
+	// Check if the option already exists.
+	$existing_timestamp = get_option( 'tec_ce_convert_content_to_blocks_cutoff_date' );
+
+	// If the option doesn't exist, save the activation timestamp.
+	if ( empty( $existing_timestamp ) ) {
+		// Get the current PHP timestamp.
+		$activation_timestamp = time();
+
+		// Format the timestamp as "YYYY-MM-DD HH:SS".
+		$formatted_timestamp = date( 'Y-m-d H:i:s', $activation_timestamp );
+
+		// Save the activation timestamp in the options table.
+		update_option( 'tec_ce_convert_content_to_blocks_cutoff_date', $formatted_timestamp );
+	}
+}
+
+/**
+ * Removing activation timestamp in case the extension fails to be activated.
+ * @return void
+ */
+function remove_activation_timestamp() {
+	delete_option( 'tec_ce_convert_content_to_blocks_cutoff_date' );
+}
+
+// Loads on plugin activation.
+register_activation_hook( __FILE__, 'save_activation_timestamp' );
 
 // Loads after common is already properly loaded.
 add_action( 'tribe_common_loaded', 'tribe_extension_ce_convert_content_to_blocks' );
