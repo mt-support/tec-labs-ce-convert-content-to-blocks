@@ -4,22 +4,22 @@
  *
  * To remove a filter:
  * ```php
- *  remove_filter( 'some_filter', [ tribe( Tribe\Extensions\__TRIBE_NAMESPACE__\Hooks::class ), 'some_filtering_method' ] );
- *  remove_filter( 'some_filter', [ tribe( 'extension.__TRIBE_SLUG_CLEAN__.hooks' ), 'some_filtering_method' ] );
+ *  remove_filter( 'some_filter', [ tribe( Tribe\Extensions\ConvertContentToBlocks\Hooks::class ), 'some_filtering_method' ] );
+ *  remove_filter( 'some_filter', [ tribe( 'extension.ce_convert_content_to_blocks.hooks' ), 'some_filtering_method' ] );
  * ```
  *
  * To remove an action:
  * ```php
- *  remove_action( 'some_action', [ tribe( Tribe\Extensions\__TRIBE_NAMESPACE__\Hooks::class ), 'some_method' ] );
- *  remove_action( 'some_action', [ tribe( 'extension.__TRIBE_SLUG_CLEAN__.hooks' ), 'some_method' ] );
+ *  remove_action( 'some_action', [ tribe( Tribe\Extensions\ConvertContentToBlocks\Hooks::class ), 'some_method' ] );
+ *  remove_action( 'some_action', [ tribe( 'extension.ce_convert_content_to_blocks.hooks' ), 'some_method' ] );
  * ```
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__;
+ * @package Tribe\Extensions\ConvertContentToBlocks;
  */
 
-namespace Tribe\Extensions\__TRIBE_NAMESPACE__;
+namespace Tribe\Extensions\ConvertContentToBlocks;
 
 use Tribe__Main as Common;
 
@@ -28,20 +28,20 @@ use TEC\Common\Contracts\Service_Provider;
 /**
  * Class Hooks.
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__;
+ * @package Tribe\Extensions\ConvertContentToBlocks;
  */
 class Hooks extends Service_Provider {
 
 	/**
 	 * Binds and sets up implementations.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	public function register() {
 		$this->container->singleton( static::class, $this );
-		$this->container->singleton( 'extension.__TRIBE_SLUG_CLEAN__.hooks', $this );
+		$this->container->singleton( 'extension.ce_convert_content_to_blocks.hooks', $this );
 
 		$this->add_actions();
 		$this->add_filters();
@@ -50,7 +50,7 @@ class Hooks extends Service_Provider {
 	/**
 	 * Adds the actions required by the plugin.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	protected function add_actions() {
 		add_action( 'tribe_load_text_domains', [ $this, 'load_text_domains' ] );
@@ -59,7 +59,7 @@ class Hooks extends Service_Provider {
 	/**
 	 * Adds the filters required by the plugin.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	protected function add_filters() {
 
@@ -68,11 +68,11 @@ class Hooks extends Service_Provider {
 	/**
 	 * Load text domain for localization of the plugin.
 	 *
-	 * @since __TRIBE_VERSION__
+	 * @since 1.0.0
 	 */
 	public function load_text_domains() {
 		$mopath = tribe( Plugin::class )->plugin_dir . 'lang/';
-		$domain = '__TRIBE_DOMAIN__';
+		$domain = 'tec-labs-ce-convert-content-to-blocks';
 
 		// This will load `wp-content/languages/plugins` files first.
 		Common::instance()->load_text_domain( $domain, $mopath );

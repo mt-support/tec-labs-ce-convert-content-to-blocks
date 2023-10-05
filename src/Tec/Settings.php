@@ -2,11 +2,11 @@
 /**
  * Settings Object.
  *
- * @since __TRIBE_VERSION__
+ * @since 1.0.0
  *
- * @package Tribe\Extensions\__TRIBE_NAMESPACE__
+ * @package Tribe\Extensions\ConvertContentToBlocks
  */
-namespace Tribe\Extensions\__TRIBE_NAMESPACE__;
+namespace Tribe\Extensions\ConvertContentToBlocks;
 
 use Tribe__Settings_Manager;
 
@@ -88,7 +88,7 @@ class Settings {
 	 */
 	private function set_options_prefix( $options_prefix = '' ) {
 		if ( empty( $opts_prefix ) ) {
-			$opts_prefix = str_replace( '-', '_', '__TRIBE_DOMAIN__' ); // The text domain.
+			$opts_prefix = str_replace( '-', '_', 'tec-labs-ce-convert-content-to-blocks' ); // The text domain.
 		}
 
 		$opts_prefix = $opts_prefix . '_';
@@ -237,8 +237,8 @@ class Settings {
 			// TODO: Settings heading end.
 			'a_setting' => [ // TODO: Change setting.
 				'type'            => 'text',
-				'label'           => esc_html__( 'Example setting', '__TRIBE_DOMAIN__' ),
-				'tooltip'         => sprintf( esc_html__( 'Example setting description. Enter your custom URL, including "http://" or "https://", for example %s.', '__TRIBE_DOMAIN__' ), '<code>https://demo.theeventscalendar.com/</code>' ),
+				'label'           => esc_html__( 'Example setting', 'tec-labs-ce-convert-content-to-blocks' ),
+				'tooltip'         => sprintf( esc_html__( 'Example setting description. Enter your custom URL, including "http://" or "https://", for example %s.', 'tec-labs-ce-convert-content-to-blocks' ), '<code>https://demo.theeventscalendar.com/</code>' ),
 				'validation_type' => 'html',
 			],
 		];
@@ -279,10 +279,10 @@ class Settings {
 	 * @return string
 	 */
 	private function get_example_intro_text() {
-		$result = '<h3>' . esc_html_x( 'Example Extension Setup', 'Settings header', '__TRIBE_DOMAIN__' ) . '</h3>';
+		$result = '<h3>' . esc_html_x( 'Example Extension Setup', 'Settings header', 'tec-labs-ce-convert-content-to-blocks' ) . '</h3>';
 		$result .= '<div style="margin-left: 20px;">';
 		$result .= '<p>';
-		$result .= esc_html_x( 'Some text here about this settings section.', 'Setting section description', '__TRIBE_DOMAIN__' );
+		$result .= esc_html_x( 'Some text here about this settings section.', 'Setting section description', 'tec-labs-ce-convert-content-to-blocks' );
 		$result .= '</p>';
 		$result .= '</div>';
 
