@@ -15,12 +15,22 @@ Convert the event content submitted through Community Events to block editor for
 
 The extension will attempt to convert the event content submitted through Community Events to block editor format.
 
-== Usage ==
+== Important ==
+
+Note, this extension is still under development and NO ACTIVE SUPPORT is provided for it.
+If you would like to report a bug or a request, you can do it in the [Issues](https://github.com/mt-support/tec-labs-ce-convert-content-to-blocks/issues) section in the GitHub repository.
+
+== Requirements ==
 
 The following two settings are required to be enabled for the extension to work.
 
 * Events > Settings > General > Activate Block Editor for Events
 * Events > Settings > Community > Use visual editor for event descriptions
+
+If these settings are not enabled, the extension will not function.
+
+The plugin will attempt the conversion for newly submitted events.
+It will not work for events submitted in the past.
 
 == Installation ==
 
