@@ -314,9 +314,23 @@ class Plugin extends Service_Provider {
 		/**
 		 * Allows filtering the block template.
 		 *
+		 * @since 2.6.0-dev
 		 * @var array $blocks The HTML markup of block elements in an array.
 		 */
 		$blocks = apply_filters( 'tec_labs_ce_block_template', $blocks );
+
+		/**
+		 * Allows filtering the block order.
+		 *
+		 * @since 2.6.0-dev
+		 * @var bool|array $block_order False|The array of the block order.
+		 */
+		$block_order = false;
+		$block_order = apply_filters( 'tec_labs_ce_block_order', $block_order );
+
+		if ( is_array( $block_order ) ) {
+			$blocks = $this->rearrange_block_order( $block_order, $blocks );
+		}
 
 		return implode( "\n", $blocks );
 	}
@@ -601,5 +615,31 @@ class Plugin extends Service_Provider {
 		$settings = $this->get_settings();
 
 		return $settings->get_option( $option, $default );
+	}
+
+	/**
+	 * Rearrange the order of blocks.
+	 *
+	 * @param array $block_order The order of blocks.
+	 * @param array $blocks      Array containing the HTML block markup.
+	 *
+	 * @return array
+	 * @since 2.6.0-dev
+	 */
+	private function rearrange_block_order( array $block_order, array $blocks ): array {
+		// Create a new array to store the ordered items
+		$ordered_blocks = [];
+
+		// Loop through the order array and add items to the new ordered array.
+		foreach ( $block_order as $item ) {
+			foreach ( $blocks as $key => $value ) {
+				if ( strpos( $key, $item ) === 0 ) {
+					$ordered_blocks[ $key ] = $value;
+				}
+			}
+		}
+
+		// Feed it back to $blocks.
+		return $ordered_blocks;
 	}
 }
