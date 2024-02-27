@@ -107,6 +107,7 @@ class Plugin extends Service_Provider {
 
 		// Start binds.
 
+		add_action( 'admin_notices', [ $this, 'maybe_add_admin_notice' ] );
 		add_filter( 'format_for_editor', [ $this, 'tec_ce_remove_blocks_on_edit' ], 10, 2 );
 		add_action( 'tribe_events_update_meta', [ $this, 'tec_ce_convert_content_to_blocks' ], 10, 3 );
 
@@ -114,6 +115,25 @@ class Plugin extends Service_Provider {
 
 		$this->container->register( Hooks::class );
 		$this->container->register( Assets::class );
+	}
+
+	/**
+	 * Add admin notice if the required setting is not enabled.
+	 *
+	 * @return void
+	 * @since 2.6.0-dev
+	 */
+	public function maybe_add_admin_notice() {
+		if ( ! tribe( 'community.main' )->getOption( 'useVisualEditor' ) ) {
+			echo '<div id="tec-labs-ce-convert-content-to-blocks-notice" class="notice notice-warning is-dismissible"><p>';
+			printf(
+			/* Translators: %1$s: Opening hyperlink tag; %2$s: Closing hyperlink tag. */
+				esc_html__( 'The "Visual Editor for Event descriptions" %1$ssetting%2$s needs to be enabled for The Events Calendar: Community Events Extension: Convert Submitted Content to Blocks to work.', 'tec-labs-ce-convert-content-to-blocks' ),
+				'<a href="' . admin_url( 'edit.php?post_type=tribe_events&page=tec-events-settings&tab=community#tribe-field-useVisualEditor' ) . '">',
+				'</a>'
+			);
+			echo '</p></div>';
+		}
 	}
 
 	/**
