@@ -311,6 +311,13 @@ class Plugin extends Service_Provider {
 		// Comments
 		$blocks['comments']      = '<!-- wp:post-comments-form /-->';
 
+		/**
+		 * Allows filtering the block template.
+		 *
+		 * @var array $blocks The HTML markup of block elements in an array.
+		 */
+		$blocks = apply_filters( 'tec_ce_blocks', $blocks );
+
 		return implode( "\n", $blocks );
 	}
 
