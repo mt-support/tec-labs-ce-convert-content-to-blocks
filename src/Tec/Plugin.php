@@ -236,7 +236,7 @@ class Plugin extends Service_Provider {
 		$blocks['content']        = $this->convert_content_to_blocks( $content );
 
 		// Cost
-		if ( ! empty( tribe_get_event_meta( $post_id, '_EventCost', true ) ) ) {
+		if ( ! empty( $data['EventCost'] ) || ! empty( tribe_get_event_meta( $post_id, '_EventCost', true ) ) ) {
 			$blocks['cost'] = '<!-- wp:tribe/event-price {"costDescription":"This is the price"} /-->';
 		}
 
