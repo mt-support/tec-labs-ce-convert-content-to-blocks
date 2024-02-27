@@ -4,7 +4,7 @@
  * Plugin URI:        https://theeventscalendar.com/extensions/ce-convert-content-to-blocks
  * GitHub Plugin URI: https://github.com/mt-support/tec-labs-ce-convert-content-to-blocks
  * Description:       Convert the event content submitted through Community Events to block editor format. 
- * Version:           2.5.1-dev
+ * Version:           2.6.0-dev
  * Author:            The Events Calendar
  * Author URI:        https://evnt.is/1971
  * License:           GPL version 3 or any later version

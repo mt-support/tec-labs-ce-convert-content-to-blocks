@@ -27,7 +27,7 @@ class Plugin extends Service_Provider {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.5.1-dev';
+	const VERSION = '2.6.0-dev';
 
 	/**
 	 * Stores the base slug for the plugin.
@@ -78,7 +78,7 @@ class Plugin extends Service_Provider {
 	private $settings;
 
 	/**
-	 * Setup the Extension's properties.
+	 * Set up the Extension's properties.
 	 *
 	 * This always executes even if the required plugins are not present.
 	 *
@@ -107,6 +107,7 @@ class Plugin extends Service_Provider {
 
 		// Start binds.
 
+		add_action( 'admin_notices', [ $this, 'maybe_add_admin_notice' ] );
 		add_filter( 'format_for_editor', [ $this, 'tec_ce_remove_blocks_on_edit' ], 10, 2 );
 		add_action( 'tribe_events_update_meta', [ $this, 'tec_ce_convert_content_to_blocks' ], 10, 3 );
 
@@ -114,6 +115,25 @@ class Plugin extends Service_Provider {
 
 		$this->container->register( Hooks::class );
 		$this->container->register( Assets::class );
+	}
+
+	/**
+	 * Add admin notice if the required setting is not enabled.
+	 *
+	 * @return void
+	 * @since 2.6.0-dev
+	 */
+	public function maybe_add_admin_notice() {
+		if ( ! tribe( 'community.main' )->getOption( 'useVisualEditor' ) ) {
+			echo '<div id="tec-labs-ce-convert-content-to-blocks-notice" class="notice notice-warning is-dismissible"><p>';
+			printf(
+			/* Translators: %1$s: Opening hyperlink tag; %2$s: Closing hyperlink tag. */
+				esc_html__( 'The "Visual Editor for Event descriptions" %1$ssetting%2$s needs to be enabled for The Events Calendar: Community Events Extension: Convert Submitted Content to Blocks to work.', 'tec-labs-ce-convert-content-to-blocks' ),
+				'<a href="' . admin_url( 'edit.php?post_type=tribe_events&page=tec-events-settings&tab=community#tribe-field-useVisualEditor' ) . '">',
+				'</a>'
+			);
+			echo '</p></div>';
+		}
 	}
 
 	/**
@@ -236,7 +256,7 @@ class Plugin extends Service_Provider {
 		$blocks['content']        = $this->convert_content_to_blocks( $content );
 
 		// Cost
-		if ( ! empty( tribe_get_event_meta( $post_id, '_EventCost', true ) ) ) {
+		if ( ! empty( $data['EventCost'] ) || ! empty( tribe_get_event_meta( $post_id, '_EventCost', true ) ) ) {
 			$blocks['cost'] = '<!-- wp:tribe/event-price {"costDescription":"This is the price"} /-->';
 		}
 
@@ -310,6 +330,27 @@ class Plugin extends Service_Provider {
 
 		// Comments
 		$blocks['comments']      = '<!-- wp:post-comments-form /-->';
+
+		/**
+		 * Allows filtering the block template.
+		 *
+		 * @since 2.6.0-dev
+		 * @var array $blocks The HTML markup of block elements in an array.
+		 * @var array $data   The submitted event data.
+		 */
+		$blocks = apply_filters( 'tec_labs_ce_block_template', $blocks, $data );
+
+		/**
+		 * Allows filtering the block order.
+		 *
+		 * @since 2.6.0-dev
+		 * @var bool|array $block_order False|The array of the block order.
+		 */
+		$block_order = apply_filters( 'tec_labs_ce_block_order', false );
+
+		if ( is_array( $block_order ) ) {
+			$blocks = $this->rearrange_block_order( $block_order, $blocks );
+		}
 
 		return implode( "\n", $blocks );
 	}
@@ -594,5 +635,51 @@ class Plugin extends Service_Provider {
 		$settings = $this->get_settings();
 
 		return $settings->get_option( $option, $default );
+	}
+
+	/**
+	 * Rearrange the order of blocks.
+	 *
+	 * @param array $block_order The order of blocks.
+	 * @param array $blocks      Array containing the HTML block markup.
+	 *
+	 * @return array
+	 * @since 2.6.0-dev
+	 */
+	private function rearrange_block_order( array $block_order, array $blocks ): array {
+		// Make sure content_start and content_end are at the right place.
+		// Remove elements .
+		$elements_to_remove = [ 'content_start', 'content_end' ];
+
+		// Remove specified elements from the array
+		$block_order = array_filter( $block_order, function ( $value ) use ( $elements_to_remove ) {
+			return ! in_array( $value, $elements_to_remove );
+		} );
+
+		// Find the position of 'content' in the array.
+		$content_index = array_search( 'content', $block_order );
+
+		if ( $content_index !== false ) {
+			// Insert 'content_start' before 'content'.
+			array_splice( $block_order, $content_index, 0, 'content_start' );
+
+			// Insert 'content_end' after 'content'.
+			array_splice( $block_order, $content_index + 2, 0, 'content_end' );
+		}
+
+		// Create a new array to store the ordered items
+		$ordered_blocks = [];
+
+		// Loop through the order array and add items to the new ordered array.
+		foreach ( $block_order as $item ) {
+			foreach ( $blocks as $key => $value ) {
+				if ( strpos( $key, $item ) === 0 ) {
+					$ordered_blocks[ $key ] = $value;
+				}
+			}
+		}
+
+		// Feed it back to $blocks.
+		return $ordered_blocks;
 	}
 }
