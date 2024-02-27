@@ -626,6 +626,26 @@ class Plugin extends Service_Provider {
 	 * @since 2.6.0-dev
 	 */
 	private function rearrange_block_order( array $block_order, array $blocks ): array {
+		// Make sure content_start and content_end are at the right place.
+		// Remove elements .
+		$elements_to_remove = [ 'content_start', 'content_end' ];
+
+		// Remove specified elements from the array
+		$block_order = array_filter( $block_order, function ( $value ) use ( $elements_to_remove ) {
+			return ! in_array( $value, $elements_to_remove );
+		} );
+
+		// Find the position of 'content' in the array.
+		$content_index = array_search( 'content', $block_order );
+
+		if ( $content_index !== false ) {
+			// Insert 'content_start' before 'content'.
+			array_splice( $block_order, $content_index, 0, 'content_start' );
+
+			// Insert 'content_end' after 'content'.
+			array_splice( $block_order, $content_index + 2, 0, 'content_end' );
+		}
+
 		// Create a new array to store the ordered items
 		$ordered_blocks = [];
 
