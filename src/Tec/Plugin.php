@@ -325,8 +325,7 @@ class Plugin extends Service_Provider {
 		 * @since 2.6.0-dev
 		 * @var bool|array $block_order False|The array of the block order.
 		 */
-		$block_order = false;
-		$block_order = apply_filters( 'tec_labs_ce_block_order', $block_order );
+		$block_order = apply_filters( 'tec_labs_ce_block_order', false );
 
 		if ( is_array( $block_order ) ) {
 			$blocks = $this->rearrange_block_order( $block_order, $blocks );
