@@ -316,7 +316,7 @@ class Plugin extends Service_Provider {
 		 *
 		 * @var array $blocks The HTML markup of block elements in an array.
 		 */
-		$blocks = apply_filters( 'tec_ce_blocks', $blocks );
+		$blocks = apply_filters( 'tec_labs_ce_block_template', $blocks );
 
 		return implode( "\n", $blocks );
 	}
