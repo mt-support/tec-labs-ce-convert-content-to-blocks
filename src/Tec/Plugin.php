@@ -336,8 +336,9 @@ class Plugin extends Service_Provider {
 		 *
 		 * @since 2.6.0-dev
 		 * @var array $blocks The HTML markup of block elements in an array.
+		 * @var array $data   The submitted event data.
 		 */
-		$blocks = apply_filters( 'tec_labs_ce_block_template', $blocks );
+		$blocks = apply_filters( 'tec_labs_ce_block_template', $blocks, $data );
 
 		/**
 		 * Allows filtering the block order.
