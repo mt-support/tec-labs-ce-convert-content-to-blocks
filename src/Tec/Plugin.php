@@ -27,7 +27,7 @@ class Plugin extends Service_Provider {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.5.1-dev';
+	const VERSION = '2.6.0-dev';
 
 	/**
 	 * Stores the base slug for the plugin.
@@ -78,7 +78,7 @@ class Plugin extends Service_Provider {
 	private $settings;
 
 	/**
-	 * Setup the Extension's properties.
+	 * Set up the Extension's properties.
 	 *
 	 * This always executes even if the required plugins are not present.
 	 *

@@ -3,9 +3,9 @@ Contributors: theeventscalendar
 Donate link: https://evnt.is/29
 Tags: events, calendar
 Requires at least: 6.0.0
-Tested up to: 6.2.2
+Tested up to: 6.4.3
 Requires PHP: 8.0
-Stable tag: 2.5.1-dev
+Stable tag: 2.6.0-dev
 License: GPL version 3 or any later version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -17,7 +17,7 @@ The extension will attempt to convert the event content submitted through Commun
 
 == Important ==
 
-Note, this extension is still under development and NO ACTIVE SUPPORT is provided for it.
+Note, this extension is under development and NO ACTIVE SUPPORT is provided for it.
 If you would like to report a bug or a request, you can do it in the [Issues](https://github.com/mt-support/tec-labs-ce-convert-content-to-blocks/issues) section in the GitHub repository.
 
 == Requirements ==
@@ -51,6 +51,13 @@ Please visit our [extension library](https://theeventscalendar.com/extensions/) 
 We're always interested in your feedback and our [Help Desk](https://support.theeventscalendar.com/) are the best place to flag any issues. Do note, however, that the degree of support we provide for extensions like this one tends to be very limited.
 
 == Changelog ==
+
+= [2.6.0-dev] 2024-02-27 =
+
+* Fix - Make sure the event cost block gets displayed.
+* Feature - Add `tec_labs_ce_block_template` filter to allow changing the block template.
+* Feature - Add `tec_labs_ce_block_order` filter to allow changing the order of the blocks.
+* Feature - Add an admin notice if the required setting is not enabled.
 
 = [2.5.1-dev] 2023-10-03 =
 
