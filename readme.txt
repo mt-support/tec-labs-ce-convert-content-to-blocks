@@ -5,7 +5,7 @@ Tags: events, calendar
 Requires at least: 6.0.0
 Tested up to: 6.4.3
 Requires PHP: 8.0
-Stable tag: 2.6.0-dev
+Stable tag: 2.6.1-dev
 License: GPL version 3 or any later version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -51,6 +51,10 @@ Please visit our [extension library](https://theeventscalendar.com/extensions/) 
 We're always interested in your feedback and our [Help Desk](https://support.theeventscalendar.com/) are the best place to flag any issues. Do note, however, that the degree of support we provide for extensions like this one tends to be very limited.
 
 == Changelog ==
+
+= [2.6.1-dev] 2024-03-18 =
+
+* Fix - Ensure that the organizer and venue blocks are correctly added when a new event is submitted.
 
 = [2.6.0-dev] 2024-02-27 =
 
