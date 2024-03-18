@@ -228,7 +228,7 @@ class Plugin extends Service_Provider {
 		// Change the post content to block editor.
 		$postarr = [
 			'ID'           => $event_id,
-			'post_content' => $this->convert_to_blocks( $data ),
+			'post_content' => $this->convert_to_blocks( $data, $event_id ),
 		];
 
 		wp_update_post( $postarr );
@@ -237,14 +237,13 @@ class Plugin extends Service_Provider {
 	/**
 	 * Helper function to transform the content into block editor format with a given pattern.
 	 *
-	 * @param array $data The submitted event data.
+	 * @param array $data    The submitted event data.
+	 * @param int   $post_id The event ID we are modifying meta for.
 	 *
 	 * @return string The content reformatted for block editor.
 	 */
-	function convert_to_blocks( array $data ): string {
+	function convert_to_blocks( array $data, int $post_id ): string {
 		$content = $data['post_content'];
-
-		$post_id = intval( $data['ID'] );
 
 		// Assemble code of blocks
 		$blocks['datetime']       = '<!-- wp:tribe/event-datetime /-->';
